@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Korcula Escapes – obseg spletne strani</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: item list on the left, sticky running total on the right; on phones the total becomes a bottom bar. */
+:root {
+  --bg: #f3f5f2;
+  --surface: #ffffff;
+  --ink: #18211d;
+  --muted: #5d6a63;
+  --line: #dbe1dc;
+  --accent: #2c6a4e;
+  --accent-soft: #e3efe8;
+  --sea: #1d5d78;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111714; --surface: #18201c; --ink: #e7ede9; --muted: #9aa8a0;
+    --line: #2a3530; --accent: #6cc59a; --accent-soft: #1f3329; --sea: #7cc0de;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111714; --surface: #18201c; --ink: #e7ede9; --muted: #9aa8a0;
+  --line: #2a3530; --accent: #6cc59a; --accent-soft: #1f3329; --sea: #7cc0de;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.5;
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding: 32px 20px 120px; }
+header { display: grid; gap: 8px; margin-bottom: 28px; max-width: 680px; }
+.eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--sea); font-weight: 600; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 4vw, 40px); line-height: 1.1; margin: 0; text-wrap: balance; }
+header p { margin: 0; color: var(--muted); }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 28px; align-items: start; }
+.group { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
+.group h2 { font-family: var(--font-display); font-weight: 500; font-size: 18px; margin: 0; padding: 14px 18px; border-bottom: 1px solid var(--line); background: var(--accent-soft); }
+.item { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 14px; align-items: start; padding: 14px 18px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.item:last-child { border-bottom: 0; }
+.item.locked { cursor: default; }
+.item h3 { font-size: 16px; font-weight: 600; margin: 0 0 2px; }
+.item p { margin: 0; color: var(--muted); font-size: 14px; }
+.price { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; text-align: right; }
+.item.off .price, .item.off h3 { color: var(--muted); }
+.item.off .price { text-decoration: line-through; font-weight: 400; }
+.tag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 8px; margin-left: 6px; vertical-align: 2px; }
+/* switch */
+.switch { position: relative; width: 40px; height: 24px; margin-top: 1px; }
+.switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.switch span { position: absolute; inset: 0; border-radius: 999px; background: var(--line); transition: background .15s; }
+.switch span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--surface); box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: transform .15s; }
+.switch input:checked + span { background: var(--accent); }
+.switch input:checked + span::after { transform: translateX(16px); }
+.switch input:disabled + span { opacity: .55; }
+.switch input:focus-visible + span { outline: 2px solid var(--sea); outline-offset: 2px; }
+/* segmented */
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin-top: 10px; }
+.seg button { font: inherit; font-size: 14px; border: 0; background: transparent; color: var(--ink); padding: 6px 12px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+.seg button:focus-visible { outline: 2px solid var(--sea); outline-offset: -2px; }
+.levels { margin-top: 8px; display: grid; gap: 4px; font-size: 14px; color: var(--muted); }
+.levels b { color: var(--ink); font-weight: 600; }
+/* stepper */
+.stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; }
+.stepper button { font: inherit; width: 32px; height: 30px; border: 0; background: transparent; color: var(--ink); cursor: pointer; font-size: 18px; }
+.stepper button:focus-visible { outline: 2px solid var(--sea); outline-offset: -2px; }
+.stepper output { min-width: 28px; text-align: center; font-variant-numeric: tabular-nums; font-weight: 600; }
+.item.extra { grid-template-columns: minmax(0, 1fr) auto auto; cursor: default; align-items: center; }
+/* summary */
+aside { position: sticky; top: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 14px; }
+aside h2 { font-family: var(--font-display); font-weight: 500; font-size: 18px; margin: 0; }
+.total { font-family: var(--font-display); font-weight: 700; font-size: 40px; line-height: 1; font-variant-numeric: tabular-nums; }
+.vat { font-size: 13px; color: var(--muted); }
+.rows { display: grid; gap: 6px; font-size: 14px; }
+.row { display: flex; justify-content: space-between; gap: 12px; font-variant-numeric: tabular-nums; }
+.row span:first-child { color: var(--muted); }
+.note { font-size: 14px; background: var(--accent-soft); border-radius: 8px; padding: 12px; }
+.note b { font-variant-numeric: tabular-nums; }
+.actions { display: grid; gap: 8px; }
+.btn { font: inherit; font-weight: 600; border-radius: 8px; padding: 11px 14px; cursor: pointer; border: 1px solid var(--accent); background: var(--accent); color: var(--surface); }
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn:focus-visible { outline: 2px solid var(--sea); outline-offset: 2px; }
+.status { font-size: 13px; color: var(--accent); min-height: 18px; }
+.fallback { display: none; width: 100%; min-height: 160px; font: 13px/1.4 var(--font-body); border: 1px solid var(--line); border-radius: 8px; padding: 8px; background: var(--bg); color: var(--ink); }
+.foot { margin-top: 24px; font-size: 13px; color: var(--muted); max-width: 680px; }
+.mobilebar { display: none; }
+@media (max-width: 820px) {
+  .layout { grid-template-columns: 1fr; }
+  aside { position: static; }
+  .mobilebar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 20px; background: var(--surface); border-top: 1px solid var(--line); z-index: 5; }
+  .mobilebar strong { font-family: var(--font-display); font-size: 22px; font-variant-numeric: tabular-nums; }
+  .mobilebar a { color: var(--accent); font-weight: 600; text-decoration: none; }
+}
+@media (max-width: 420px) {
+  .item { grid-template-columns: 44px minmax(0, 1fr); }
+  .item .price { grid-column: 2; text-align: left; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Ponudba · prenova spletne strani</div>
+    <h1>Določi obseg spletne strani Korcula Escapes</h1>
+    <p>Vsaka postavka vključuje oblikovanje, programiranje in povezavo s CMS vmesnikom, prek katerega lahko kasneje sami dodajate nove nastanitvene enote in urejate vsebine spletnega mesta.</p>
+    <p>Vklopite ali izklopite postavke in sproti vidite skupni znesek. Osnovne postavke so potrebne za delujočo stran, ostale lahko dodamo tudi kasneje.</p>
+  </header>
+
+  <div class="layout">
+    <main id="list"></main>
+
+    <aside id="summary" aria-live="polite">
+      <h2>Vaš izbor</h2>
+      <div>
+        <div class="total" id="total">0 €</div>
+        <div class="vat">DDV ni vključen</div>
+      </div>
+      <div class="rows" id="rows"></div>
+      <div class="note" id="perMonth"></div>
+      <div class="actions">
+        <button class="btn" id="copy" type="button">Kopiraj izbor</button>
+        <button class="btn ghost" id="reset" type="button">Ponastavi</button>
+        <div class="status" id="status"></div>
+        <textarea class="fallback" id="fallback" readonly aria-label="Povzetek izbora"></textarea>
+      </div>
+    </aside>
+  </div>
+
+  <p class="foot">Rezervacija in plačilo potekata prek Rentlio Booking Engine-a, iskalnik in koledar na strani gosta le preusmerita tja. Ne vključuje naročnine Webflow in Rentlio, domene, besedil, prevodov in fotografij. Urna postavka 50 €.</p>
+</div>
+
+<div class="mobilebar"><span>Skupaj <strong id="mTotal">0 €</strong></span><a href="#summary">Povzetek</a></div>
+
+<script>
+const AMORT_MONTHS = 10 * 12;
+const groups = [
+  { name: "Osnove", items: [
+    { id: "osnove", title: "Osnove in zagon", desc: "Look&Feel spletne strani (določitev barv, tipografije, primarnih UI elementov), podpora mobilnim napravam, glava in noga, osnovni SEO, preusmeritve s stare strani, objava, vnos do 5 objektov", price: 1800, required: true },
+    { id: "kontakt", title: "Kontakt", desc: "Kontaktni podatki in obrazec za povpraševanje", price: 100, required: true },
+    { id: "landing", title: "Pristajalne strani", desc: "Predloga za kampanje in SEO, npr. »Eko nastanitve Korčula«", price: 300 }
+  ]},
+  { name: "Domača stran", items: [
+    { id: "home", title: "Domača stran", desc: "Video v uvodnem delu, iskalnik, ki gosta preusmeri na Rentlio, vrednote, izbor objektov, poziv k rezervaciji", price: 500, required: true }
+  ]},
+  { name: "Nastanitve", items: [
+    { id: "seznam", title: "Seznam objektov", desc: "Kartice vseh objektov", price: 500, required: true },
+    { id: "objekt", title: "Predstavitev objekta", required: true, levels: [
+      { key: "simple", label: "Enostavna", price: 900, desc: "galerija, ključni podatki, opis, oprema, lokacija, gumb »Rezerviraj«" },
+      { key: "advanced", label: "Napredna", price: 1800, desc: "vse iz enostavne + koledar razpoložljivosti, ki izbrane datume posreduje v Rentlio Booking Engine, sobe, kaj je vključeno, storitve, okolica z razdaljami, mnenja, podobni objekti" }
+    ]}
+  ]},
+  { name: "Destinacija Korčula", items: [
+    { id: "vodnik", title: "Vodnik po Korčuli", desc: "Otok, kaj početi, načrtovanje potovanja", price: 600 },
+    { id: "kraji", title: "Kraji in vasi", desc: "Stran za vsak kraj z bližnjimi objekti", price: 400 }
+  ]},
+  { name: "Doživetja", items: [
+    { id: "dozivetja", title: "Doživetja", desc: "Kategorije, posamezna doživetja, povpraševanje", price: 400 }
+  ]},
+  { name: "O nas", items: [
+    { id: "onas", title: "O nas", desc: "Naša zgodba, zakaj z nami, mnenja, kako rezervirati, FAQ, pravne strani", price: 400 },
+    { id: "partnerji", title: "Za lastnike in partnerje", desc: "Predstavitev sodelovanja in obrazec", price: 150 }
+  ]}
+];
+const extras = [
+  { id: "xobjekt", title: "Vnos dodatnega objekta", desc: "Nad 5 vključenih objektov", unit: 50, unitLabel: "objekt" },
+  { id: "xjezik", title: "Dodatna jezikovna različica", desc: "Postavitev, brez prevoda", unit: 300, unitLabel: "jezik" }
+];
+
+const state = { on: {}, level: { objekt: "simple" }, qty: {} };
+function initState() {
+  groups.forEach(g => g.items.forEach(it => { state.on[it.id] = !!it.required; }));
+  state.level.objekt = "simple";
+  extras.forEach(x => { state.qty[x.id] = 0; });
+}
+
+const eur = n => Math.round(n).toLocaleString("en-US") + " €";
+const itemPrice = it => it.levels ? it.levels.find(l => l.key === state.level[it.id]).price : it.price;
+
+function render() {
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+  {
+    const sec = document.createElement("section");
+    sec.className = "group";
+    sec.innerHTML = `<h2>Postavke</h2>`;
+    groups.flatMap(g => g.items).sort((a, b) => (b.required ? 1 : 0) - (a.required ? 1 : 0)).forEach(it => {
+      const row = document.createElement("div");
+      const on = state.on[it.id];
+      row.className = "item" + (on ? "" : " off") + (it.required ? " locked" : "");
+      const inputId = "t-" + it.id;
+      let body = `<h3><label for="${inputId}">${it.title}</label>${it.required ? '<span class="tag">Nujno</span>' : ""}</h3>`;
+      if (it.levels) {
+        body += `<div class="seg" role="group" aria-label="Raven predstavitve">` +
+          it.levels.map(l => `<button type="button" id="lvl-${l.key}" data-level="${l.key}" aria-pressed="${state.level[it.id] === l.key}">${l.label} · ${eur(l.price)}</button>`).join("") +
+          `</div><div class="levels">` + it.levels.map(l => `<div><b>${l.label}:</b> ${l.desc}</div>`).join("") + `</div>`;
+      } else {
+        body += `<p>${it.desc}</p>`;
+      }
+      row.innerHTML = `<div class="switch"><input type="checkbox" id="${inputId}" ${on ? "checked" : ""} ${it.required ? "disabled" : ""}><span></span></div><div>${body}</div><div class="price">${eur(itemPrice(it))}</div>`;
+      if (!it.required) {
+        row.addEventListener("click", e => {
+          if (e.target.closest("input, button")) return;
+          state.on[it.id] = !state.on[it.id]; render();
+        });
+        row.querySelector("input").addEventListener("change", e => { state.on[it.id] = e.target.checked; render(); });
+      }
+      if (it.levels) {
+        row.querySelectorAll("[data-level]").forEach(b => b.addEventListener("click", () => {
+          state.level[it.id] = b.dataset.level; render();
+          document.getElementById("lvl-" + b.dataset.level).focus();
+        }));
+      }
+      sec.appendChild(row);
+    });
+    list.appendChild(sec);
+  }
+
+  const xs = document.createElement("section");
+  xs.className = "group";
+  xs.innerHTML = "<h2>Dodatne storitve</h2>";
+  extras.forEach(x => {
+    const row = document.createElement("div");
+    row.className = "item extra" + (state.qty[x.id] ? "" : " off");
+    row.innerHTML = `<div><h3>${x.title}</h3><p>${x.desc} · ${eur(x.unit)} / ${x.unitLabel}</p></div>
+      <div class="stepper"><button type="button" id="m-${x.id}" aria-label="Manj: ${x.title}">−</button><output id="q-${x.id}">${state.qty[x.id]}</output><button type="button" id="p-${x.id}" aria-label="Več: ${x.title}">+</button></div>
+      <div class="price">${eur(state.qty[x.id] * x.unit)}</div>`;
+    row.querySelector(`#m-${x.id}`).addEventListener("click", () => { state.qty[x.id] = Math.max(0, state.qty[x.id] - 1); render(); document.getElementById("m-" + x.id).focus(); });
+    row.querySelector(`#p-${x.id}`).addEventListener("click", () => { state.qty[x.id] = Math.min(50, state.qty[x.id] + 1); render(); document.getElementById("p-" + x.id).focus(); });
+    xs.appendChild(row);
+  });
+  list.appendChild(xs);
+
+  summarize();
+}
+
+function selection() {
+  const lines = [];
+  groups.forEach(g => g.items.forEach(it => {
+    if (!state.on[it.id]) return;
+    const lvl = it.levels ? " (" + it.levels.find(l => l.key === state.level[it.id]).label.toLowerCase() + ")" : "";
+    lines.push({ label: it.title + lvl, price: itemPrice(it) });
+  }));
+  extras.forEach(x => { if (state.qty[x.id]) lines.push({ label: `${x.title} × ${state.qty[x.id]}`, price: state.qty[x.id] * x.unit }); });
+  return lines;
+}
+
+function summarize() {
+  const lines = selection();
+  const total = lines.reduce((s, l) => s + l.price, 0);
+  document.getElementById("total").textContent = eur(total);
+  document.getElementById("mTotal").textContent = eur(total);
+  document.getElementById("rows").innerHTML = lines.map(l => `<div class="row"><span>${l.label}</span><span>${eur(l.price)}</span></div>`).join("");
+  const perMonth = Math.round(total / AMORT_MONTHS);
+  const p1 = Math.round(total * 0.3), p2 = Math.round(total * 0.3), p3 = total - p1 - p2;
+  document.getElementById("perMonth").innerHTML =
+    `<div style="font-weight:600;margin-bottom:6px">Plačilo v treh obrokih</div>` +
+    `<div class="rows">` +
+    `<div class="row"><span>30 % ob začetku</span><span>${eur(p1)}</span></div>` +
+    `<div class="row"><span>30 % po potrditvi oblikovanja</span><span>${eur(p2)}</span></div>` +
+    `<div class="row"><span>40 % po objavi spletnega mesta</span><span>${eur(p3)}</span></div>` +
+    `</div><br>Prejšnja spletna stran je služila 13 let. Že pri amortizacijski dobi 10 let to pomeni okoli <b>${eur(perMonth)} na mesec</b>.`;
+}
+
+function summaryText() {
+  const lines = selection();
+  const total = lines.reduce((s, l) => s + l.price, 0);
+  return "Korcula Escapes – izbor postavk za spletno stran\n\n" +
+    lines.map(l => `- ${l.label}: ${eur(l.price)}`).join("\n") +
+    `\n\nSkupaj: ${eur(total)} (brez DDV)` +
+    `\n\nPlačilo: 30 % ob začetku (${eur(Math.round(total*0.3))}), 30 % po potrditvi oblikovanja (${eur(Math.round(total*0.3))}), 40 % po objavi (${eur(total-2*Math.round(total*0.3))})`;
+}
+
+document.getElementById("copy").addEventListener("click", async () => {
+  const text = summaryText();
+  const status = document.getElementById("status");
+  const fb = document.getElementById("fallback");
+  try {
+    await navigator.clipboard.writeText(text);
+    status.textContent = "Izbor je kopiran. Prilepite ga v e-pošto ali sporočilo.";
+    fb.style.display = "none";
+  } catch (e) {
+    fb.value = text; fb.style.display = "block"; fb.select();
+    status.textContent = "Kopiranje ni uspelo. Označite besedilo spodaj in ga kopirajte ročno.";
+  }
+});
+document.getElementById("reset").addEventListener("click", () => {
+  initState(); render();
+  document.getElementById("status").textContent = "";
+  document.getElementById("fallback").style.display = "none";
+});
+
+initState();
+render();
+</script>
+</body>
+</html>
