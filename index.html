@@ -10,28 +10,32 @@
 <style>
 /* Layout: item list on the left, sticky running total on the right; on phones the total becomes a bottom bar. */
 :root {
-  --bg: #f3f5f2;
+  --bg: #f5f5f5;
   --surface: #ffffff;
-  --ink: #18211d;
-  --muted: #5d6a63;
-  --line: #dbe1dc;
-  --accent: #2c6a4e;
-  --accent-soft: #e3efe8;
-  --sea: #1d5d78;
+  --ink: #111111;
+  --muted: #666666;
+  --line: #dddddd;
+  --accent: #111111;
+  --accent-soft: #eeeeee;
+  --sea: #111111;
+  --tag: #1f7a4d;
+  --tag-soft: #e2f2e9;
   --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #111714; --surface: #18201c; --ink: #e7ede9; --muted: #9aa8a0;
-    --line: #2a3530; --accent: #6cc59a; --accent-soft: #1f3329; --sea: #7cc0de;
+    --bg: #0e0e0e; --surface: #181818; --ink: #f2f2f2; --muted: #a0a0a0;
+    --line: #2e2e2e; --accent: #f2f2f2; --accent-soft: #242424; --sea: #f2f2f2;
+    --tag: #6cc59a; --tag-soft: #1c3328;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #111714; --surface: #18201c; --ink: #e7ede9; --muted: #9aa8a0;
-  --line: #2a3530; --accent: #6cc59a; --accent-soft: #1f3329; --sea: #7cc0de;
+  --bg: #0e0e0e; --surface: #181818; --ink: #f2f2f2; --muted: #a0a0a0;
+  --line: #2e2e2e; --accent: #f2f2f2; --accent-soft: #242424; --sea: #f2f2f2;
+  --tag: #6cc59a; --tag-soft: #1c3328;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -56,7 +60,7 @@ header p { margin: 0; color: var(--muted); }
 .price { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; text-align: right; }
 .item.off .price, .item.off h3 { color: var(--muted); }
 .item.off .price { text-decoration: line-through; font-weight: 400; }
-.tag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 8px; margin-left: 6px; vertical-align: 2px; }
+.tag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--tag); background: var(--tag-soft); border-radius: 999px; padding: 2px 8px; margin-left: 6px; vertical-align: 2px; }
 /* switch */
 .switch { position: relative; width: 40px; height: 24px; margin-top: 1px; }
 .switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
